@@ -1,0 +1,13 @@
+.root {
+    -fx-font-family:  Britannic Bold;
+}
+
+.button {
+    -fx-background-color: white;
+    -fx-border-radius: 10;
+    -fx-background-radius: 13;
+    -fx-pref-width: 75;
+    -fx-pref-height: 30;
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+}
