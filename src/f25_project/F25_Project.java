@@ -1,4 +1,4 @@
-/*
+ /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
@@ -14,7 +14,7 @@ import javafx.stage.Stage;
  *
  * @author 2376190
  */
-public class F25_Project extends Application{
+public class F25_Project extends Application implements UI{
 
     /**
      * @param args the command line arguments
@@ -25,23 +25,10 @@ public class F25_Project extends Application{
 
     @Override
     public void start(Stage stage) throws Exception {
-        Stage menu = new Stage();
-        Stage data = new Stage();
+        System.out.println(MENU);
         
-        FXMLLoader menuLoader = new FXMLLoader(getClass().getResource("view/Menu.fxml"));
-        FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("view/MainTable.fxml"));
-        FXMLLoader dataLoader = new FXMLLoader(getClass().getResource("view/Data.fxml"));
-        
-        stage.setScene(new Scene(mainLoader.load()));
-        stage.setTitle("Playground");
+        stage.setTitle("Menu");
+        stage.setScene(new Scene(menuLoader.load()));
         stage.show();
-        
-        menu.setTitle("Menu");
-        menu.setScene(new Scene(menuLoader.load()));
-        menu.show();
-        
-        data.setTitle("Data Table");
-        data.setScene(new Scene(dataLoader.load()));
-        data.show();
     }
 }
