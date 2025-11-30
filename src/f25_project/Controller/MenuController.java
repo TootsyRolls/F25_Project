@@ -5,11 +5,14 @@
 package f25_project.Controller;
 
 import f25_project.UI;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
@@ -34,7 +37,9 @@ public class MenuController implements Initializable, UI {
     }    
 
     @FXML
-    private void handleStart(ActionEvent event) {
+    private void handleStart(ActionEvent event) throws IOException {
+        Stage stage = (Stage) startButton.getScene().getWindow();
+        stage.setScene(toMainTable());
     }
 
     @FXML
@@ -42,6 +47,8 @@ public class MenuController implements Initializable, UI {
         ((Stage) exitButton.getScene().getWindow()).close();
     }
     
-    
-    
+    private Scene toMainTable() throws IOException {
+        Parent mainTable = mainLoader.load();
+        return new Scene(mainTable);
+    }
 }

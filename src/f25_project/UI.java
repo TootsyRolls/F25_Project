@@ -16,10 +16,10 @@ import javafx.scene.Scene;
  */
 public interface UI {
     final URL MENU = F25_Project.class.getResource("View/Menu.fxml");
-//    final URL MAIN = F25_Project.class.getResource("MainTable.fxml");
-//    final URL DATA = F25_Project.class.getResource("Menu.fxml");
+    final URL MAIN = F25_Project.class.getResource("View/MainTable.fxml");
+    final URL DATA = F25_Project.class.getResource("View/Menu.fxml");
     
     FXMLLoader menuLoader = new FXMLLoader(MENU);
-//    FXMLLoader mainLoader = new FXMLLoader(MAIN);
-//    FXMLLoader dataLoader = new FXMLLoader(DATA);
+    FXMLLoader mainLoader = new FXMLLoader(MAIN);
+    FXMLLoader dataLoader = new FXMLLoader(DATA);
 }

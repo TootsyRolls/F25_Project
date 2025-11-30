@@ -25,10 +25,14 @@ public class F25_Project extends Application implements UI{
 
     @Override
     public void start(Stage stage) throws Exception {
-        System.out.println(MENU);
+        
         
         stage.setTitle("Menu");
         stage.setScene(new Scene(menuLoader.load()));
         stage.show();
+        
+        stage.sceneProperty().addListener(cl -> {
+            stage.setMaximized(true);
+        });
     }
 }
