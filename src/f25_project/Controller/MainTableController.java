@@ -49,6 +49,9 @@ public class MainTableController implements Initializable, UI {
     private Button exitButton;
     
     @FXML
+    private Button resetButton;
+    
+    @FXML
     private Label frictionLabel;
 
     @FXML
@@ -112,6 +115,15 @@ public class MainTableController implements Initializable, UI {
     }
     
     @FXML
+    void handleReset(ActionEvent event) {
+        cue.getBall().setLayoutX(100);
+        cue.getBall().setLayoutY(400);
+        
+        object.getBall().setLayoutX(550);
+        object.getBall().setLayoutY(400);
+    }
+    
+    @FXML
     void push(MouseEvent event) {
         System.out.println(event.getX());
         
@@ -122,11 +134,6 @@ public class MainTableController implements Initializable, UI {
         
         calculateAppliedPower(power, -event.getX(), -event.getY(), cue);
     }
-    
-//    private void updateBallPosition(Ball ball) {
-//        ball.getBall().centerXProperty().addListener(cl -> {
-//        });
-//    }
     
     private void calculateAppliedPower(double power, double x, double y, Ball ball) {
         double rad = axisToRad(x, y);
@@ -159,19 +166,13 @@ public class MainTableController implements Initializable, UI {
         double speed = kineticToSpeed(kEnergy, ball);
         displacementX = speed * Math.cos(rad);
         displacementY = speed * Math.sin(rad);
-        
-        System.out.println(displacementX + "Movement X");
-        System.out.println(displacementY + "Movement Y");
-        
+           
         predictDisplacement(displacementX, displacementY, ball);
     }
     
     private void measureDistance(Ball ball) {        
         double displacementX = ball.getVelocityX() * TIMEFRAMESEC;
         double displacementY = ball.getVelocityY() * TIMEFRAMESEC;
-        
-        System.out.println(displacementX + "Movement X");
-        System.out.println(displacementY + "Movement Y");
         
         predictDisplacement(displacementX, displacementY, ball);
     }
@@ -200,8 +201,6 @@ public class MainTableController implements Initializable, UI {
         move.setOnFinished(eh -> {
             ball.setPosX(move.getNode().getTranslateX());
             ball.setPosY(move.getNode().getTranslateY());
-            ball.getBall().setCenterX(move.getNode().getTranslateX());
-            ball.getBall().setCenterY(move.getNode().getTranslateY());
             calculateNewMotion(ball);
         });
     }
