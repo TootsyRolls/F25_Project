@@ -115,7 +115,7 @@ public class MainTableController implements Initializable, UI {
     void push(MouseEvent event) {
         System.out.println(event.getX());
         
-        double arbitraryAmplifier = 200; //Try to get a coefficient that even out the power of the push
+        double arbitraryAmplifier = 10; //Try to get a coefficient that even out the power of the push
         
         double power = arbitraryAmplifier * pythagorean(event.getX(), event.getY());
         
@@ -139,12 +139,31 @@ public class MainTableController implements Initializable, UI {
         ball.setVelocityY(velocityY);
         ball.setKineticEnergy(kEnergy);
         
+        System.out.println(rad + "pi rad");
         System.out.println(kEnergy + " Kinetic");
         System.out.println(speed + " speed");
         System.out.println(velocityX + " x speed");
         System.out.println(velocityY + " y speed");
         
         measureDistance(ball);
+    }
+    
+    private void calculateNewMotion(Ball ball) {
+        double displacementX = ball.getVelocityX() * TIMEFRAMESEC;
+        double displacementY = ball.getVelocityY() * TIMEFRAMESEC;
+        double rad = axisToRad(displacementX, displacementY);
+        
+        double kEnergy = ball.getKineticEnergy() - frictionDecay(pythagorean(displacementX, displacementY), ball);
+        ball.setKineticEnergy(kEnergy);
+        
+        double speed = kineticToSpeed(kEnergy, ball);
+        displacementX = speed * Math.cos(rad);
+        displacementY = speed * Math.sin(rad);
+        
+        System.out.println(displacementX + "Movement X");
+        System.out.println(displacementY + "Movement Y");
+        
+        predictDisplacement(displacementX, displacementY, ball);
     }
     
     private void measureDistance(Ball ball) {        
@@ -165,6 +184,9 @@ public class MainTableController implements Initializable, UI {
     }
     
     private void displaceBall(double x, double y, Ball ball) {
+        if (ball.getKineticEnergy() <= 0) {
+            return;
+        }
         TranslateTransition move = new TranslateTransition(Duration.millis(TIMEFRAME), ball.getBall());
         move.setInterpolator(Interpolator.LINEAR);
         move.setFromX(ball.getPosX());
@@ -180,13 +202,16 @@ public class MainTableController implements Initializable, UI {
             ball.setPosY(move.getNode().getTranslateY());
             ball.getBall().setCenterX(move.getNode().getTranslateX());
             ball.getBall().setCenterY(move.getNode().getTranslateY());
+            calculateNewMotion(ball);
         });
+    }
+    
+    private double frictionDecay(double displacement, Ball ball) {
+        return frictionCoefficient * ball.getBallMass() * GRAVITYA * displacement;
     }
     
     private double axisToRad(double x, double y) {
         double rad = Math.atan2(y, x);
-        System.out.println(rad + "pi rad");
-
         return rad;
     }
     
