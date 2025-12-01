@@ -11,7 +11,7 @@ import javafx.scene.shape.Circle;
  * @author Natha
  */
 public class Ball {
-    private final int BALLRADIUS = 20;
+    public static final int BALLRADIUS = 20;
     private double ballMass = 1;
     private Circle ball;
     private double PosX;
@@ -19,6 +19,8 @@ public class Ball {
     private double velocityX;
     private double velocityY;
     private double kineticEnergy;
+    private boolean bouncedX = false;
+    private boolean bouncedY = false;
 
     public Ball(Circle ball, double PosX, double PosY) {
         this.ball = ball;
@@ -89,5 +91,24 @@ public class Ball {
     public void setKineticEnergy(double kineticEnergy) {
         this.kineticEnergy = kineticEnergy;
     }
+
+    public boolean isBouncedX() {
+        return bouncedX;
+    }
+
+    public void setBouncedX(boolean bouncedX) {
+        this.bouncedX = bouncedX;
+    }
+
+    public boolean isBouncedY() {
+        return bouncedY;
+    }
+
+    public void setBouncedY(boolean bouncedY) {
+        this.bouncedY = bouncedY;
+    }
+
+    
+    
     
 }

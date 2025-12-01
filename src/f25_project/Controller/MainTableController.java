@@ -71,6 +71,9 @@ public class MainTableController implements Initializable, UI {
         cue = new Ball(cueBall, cueBall.getCenterX(), cueBall.getCenterY());
         object = new Ball(objectBall, objectBall.getCenterX(), objectBall.getCenterY());
         
+        bounceOffWallProperty(cue);
+//        bounceOffWallProperty(object);
+        
         massLabel.setText("1.00");
         
         massSlider.valueProperty().addListener(cl -> {
@@ -116,11 +119,15 @@ public class MainTableController implements Initializable, UI {
     
     @FXML
     void handleReset(ActionEvent event) {
-        cue.getBall().setLayoutX(100);
-        cue.getBall().setLayoutY(400);
+        cue.setPosX(0);
+        cue.setPosY(0);
+        cue.getBall().setTranslateX(0);
+        cue.getBall().setTranslateY(0);
         
-        object.getBall().setLayoutX(550);
-        object.getBall().setLayoutY(400);
+        object.getBall().setTranslateX(0);
+        object.getBall().setTranslateY(0);
+        object.setPosX(0);
+        object.setPosY(0);
     }
     
     @FXML
@@ -133,6 +140,42 @@ public class MainTableController implements Initializable, UI {
         
         
         calculateAppliedPower(power, -event.getX(), -event.getY(), cue);
+        resetButton.setDisable(true);
+        cue.getBall().setDisable(true);
+    }
+    
+    private void bounceOffWallProperty(Ball ball) {
+        ball.getBall().translateXProperty().addListener(cl -> {
+            double left = -ball.getBall().getLayoutX() + Ball.BALLRADIUS;
+            double right = table.getWidth() - ball.getBall().getLayoutX() - Ball.BALLRADIUS;
+            
+            if (!ball.isBouncedX() &&
+                    (ball.getPosX() < left 
+                    || ball.getPosX() > right)) {
+                    
+                ball.setBouncedX(true);
+                ball.setVelocityX(-ball.getVelocityX());
+            }
+            if (ball.isBouncedX() && (ball.getPosX() > left && ball.getPosX() < right)) {
+                ball.setBouncedX(false);
+            }
+        });
+        
+        ball.getBall().translateYProperty().addListener(cl -> {
+            double top = -ball.getBall().getLayoutY() + Ball.BALLRADIUS;
+            double bottom = table.getHeight() - ball.getBall().getLayoutY() - Ball.BALLRADIUS;
+            
+            if (!ball.isBouncedY() &&
+                    (ball.getPosY() < top 
+                    || ball.getPosY() > bottom)) {
+                
+                ball.setBouncedY(true);
+                ball.setVelocityY(-ball.getVelocityY());
+            }
+            if (ball.isBouncedY() && (ball.getPosY() > top && ball.getPosY() < bottom)) {
+                ball.setBouncedY(false);
+            }
+        });
     }
     
     private void calculateAppliedPower(double power, double x, double y, Ball ball) {
@@ -186,6 +229,8 @@ public class MainTableController implements Initializable, UI {
     
     private void displaceBall(double x, double y, Ball ball) {
         if (ball.getKineticEnergy() <= 0) {
+            resetButton.setDisable(false);
+            cue.getBall().setDisable(false);
             return;
         }
         TranslateTransition move = new TranslateTransition(Duration.millis(TIMEFRAME), ball.getBall());
