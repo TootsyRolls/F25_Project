@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane style="-fx-border-color: Black; -fx-border-width: 3;" stylesheets="@../Resources/Style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="f25_project.Controller.MainTableController">
+<BorderPane style="-fx-border-color: Black; -fx-border-width: 3;" stylesheets="@../Resources/Style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="f25_project.Controller.MainTableController">
    <center>
       <Pane fx:id="table" prefHeight="800.0" prefWidth="600.0" style="-fx-border-color: black; -fx-border-width: 3;" stylesheets="@../Resources/Style.css">
          <opaqueInsets>
