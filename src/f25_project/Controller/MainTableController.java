@@ -31,7 +31,7 @@ import javafx.util.Duration;
 public class MainTableController implements Initializable, UI {
     
     private final double GRAVITYA = 9.8;
-    private final double TIMEFRAME = 20; //in Milliseconds
+    private final double TIMEFRAME = 10; //in Milliseconds
     private final double TIMEFRAMESEC = TIMEFRAME/1000; //in Milliseconds
     
     private double frictionCoefficient = 0.1;
@@ -71,7 +71,7 @@ public class MainTableController implements Initializable, UI {
         cue = new Ball(cueBall, cueBall.getLayoutX(), cueBall.getLayoutY());
         object = new Ball(objectBall, objectBall.getLayoutX(), objectBall.getLayoutY());
         
-//        writePositions();
+        writePositions();
         
         bounceOffWallProperty(cue);
         bounceOffWallProperty(object);
@@ -144,7 +144,6 @@ public class MainTableController implements Initializable, UI {
         
         double power = arbitraryAmplifier * pythagorean(event.getX(), event.getY());
         
-//        System.out.println(event.getX() + " MouseX, " + event.getY() + " MouseY");
         calculateAppliedPower(power, -event.getX(), -event.getY(), cue);
         resetButton.setDisable(true);
         cue.getBall().setDisable(true);
@@ -152,95 +151,90 @@ public class MainTableController implements Initializable, UI {
     
     private void bounceOffWallProperty(Ball ball) {
         ball.getBall().translateXProperty().addListener(cl -> {
-            double preventWallX = ball.getVelocityX() * TIMEFRAMESEC;
-            double left = Ball.BALLRADIUS + preventWallX;
-            double right = table.getWidth() - Ball.BALLRADIUS - preventWallX;
+            double left = Ball.BALLRADIUS - ball.getBall().getLayoutX();
+            double right = table.getWidth() - Ball.BALLRADIUS - ball.getBall().getLayoutX();
             
             if (!ball.isBouncedX() &&
-                    (ball.getPosX() < left 
-                    || ball.getPosX() > right)) {
+                    (ball.getBall().getTranslateX() < left
+                    || ball.getBall().getTranslateX() > right)) {
                     
                 ball.setBouncedX(true);
                 ball.setVelocityX(-ball.getVelocityX());
-                System.out.println(ball.isBouncedX());
             }
-            if (ball.isBouncedX() && (ball.getPosX() > left + Ball.BALLRADIUS   && ball.getPosX() < right + Ball.BALLRADIUS)) {
-                System.out.println(ball.isBouncedY());
-                ball.setBouncedX(false);
+            if (ball.isBouncedX() 
+                    && (ball.getBall().getTranslateX() > left 
+                    && ball.getBall().getTranslateX() < right)
+                    && ball.getPosX() > Ball.BALLRADIUS 
+                    && ball.getPosX() < table.getWidth() - Ball.BALLRADIUS) {
+                ball.setBouncedX(false);;
             }
         });
         
         ball.getBall().translateYProperty().addListener(cl -> {
-            double preventWallY = ball.getVelocityY() * TIMEFRAMESEC;
-            double top =  Ball.BALLRADIUS + preventWallY;
-            double bottom = table.getHeight() - Ball.BALLRADIUS - preventWallY;
+            double top =  Ball.BALLRADIUS - ball.getBall().getLayoutY();
+            double bottom = table.getHeight() - Ball.BALLRADIUS - ball.getBall().getLayoutY();
             
             if ((!ball.isBouncedY() &&
-                    (ball.getPosY() < top 
-                    || ball.getPosY() > bottom))) {
+                    (ball.getBall().getTranslateY() < top || ball.getBall().getTranslateY() > bottom))) {
                 
                 ball.setBouncedY(true);
                 ball.setVelocityY(-ball.getVelocityY());
             }
-            if (ball.isBouncedY() && (ball.getPosY() > top * (2 + (TIMEFRAME/10)) && ball.getPosY() < bottom * (2 + (TIMEFRAME/10)))) {
+            if (ball.isBouncedY() && ball.getBall().getTranslateY() > top && ball.getBall().getTranslateY() < bottom) {
                 ball.setBouncedY(false);
             }
         });
     }
     
     private boolean collide(Ball c, Ball o) {
-        
-        boolean singleActif = false;
         c.getBall().translateXProperty().addListener(cl -> {
-            double distanceX = (o.getPosX())  - c.getPosX();
-            double distanceY = (o.getPosY()) - c.getPosY();
-            double radAbs = axisToRad(Math.abs(distanceX), Math.abs(distanceY));
-            double rad = axisToRad(distanceX, distanceY);
-            double distance = pythagorean(distanceX, distanceY);
-            
-            double ballDetectionRange = 2 * Ball.BALLRADIUS + pythagorean(c.getVelocityX(), c.getVelocityY()) * TIMEFRAMESEC;
-            
-            if (!c.isCollided() && !o.isCollided() && distance <= ballDetectionRange) {
-                double kEnergyTransfert = o.getKineticEnergy() + c.getKineticEnergy() * energyTransferRatio(radAbs, c.getVelocityX(), c.getVelocityY());
-                c.setCollided(true);
-                o.setCollided(true);
-                c.setKineticEnergy(c.getKineticEnergy() - kEnergyTransfert);
-                c.setVelocityX(c.getVelocityX() * Math.cos(rad + Math.PI/2 + radAbs));
-                c.setVelocityY(c.getVelocityY() * Math.sin(rad + Math.PI/2 + radAbs));
-                calculateAppliedPower(kEnergyTransfert / TIMEFRAMESEC, distanceX, distanceY, o);
-            }
-            if (c.isCollided() && o.isCollided() && distance > ballDetectionRange) {
-                c.setCollided(false);
-                o.setCollided(false);
-            }
+                colliding(c,o);
         });
         
-//        c.getBall().translateYProperty().addListener(cl -> {
-//            if (singleActif) {
-//                double distanceX = (o.getPosX())  - c.getPosX();
-//                double distanceY = (o.getPosY()) - c.getPosY();
-//                double radAbs = axisToRad(Math.abs(distanceX), Math.abs(distanceY));
-//                double rad = axisToRad(distanceX, distanceY);
-//                double distance = pythagorean(distanceX, distanceY);
-//
-//                double ballDetectionRange = 2 * Ball.BALLRADIUS + pythagorean(c.getVelocityX(), c.getVelocityY()) * TIMEFRAMESEC;
-//
-//                if (!c.isCollided() && !o.isCollided() && distance <= ballDetectionRange) {
-//                    double kEnergyTransfert = o.getKineticEnergy() + c.getKineticEnergy() * energyTransferRatio(radAbs, c.getVelocityX(), c.getVelocityY());
-//                    c.setCollided(true);
-//                    o.setCollided(true);
-//                    c.setKineticEnergy(c.getKineticEnergy() - kEnergyTransfert);
-//                    c.setVelocityX(c.getVelocityX() * Math.cos(rad + Math.PI/2 + radAbs));
-//                    c.setVelocityY(c.getVelocityY() * Math.sin(rad + Math.PI/2 + radAbs));
-//                    calculateAppliedPower(kEnergyTransfert / TIMEFRAMESEC, distanceX, distanceY, o);
-//                }
-//                if (c.isCollided() && o.isCollided() && distance > ballDetectionRange) {
-//                    c.setCollided(false);
-//                    o.setCollided(false);
-//                }
-//            }
-//        });
+        c.getBall().translateYProperty().addListener(cl -> {
+            if ((int) c.getVelocityX() == 0) {
+               colliding(c, o);
+            }
+        });
         return true;
+    }
+    
+    private void colliding(Ball c, Ball o) {
+        double distanceX = (o.getPosX())  - c.getPosX();
+        double distanceY = (o.getPosY()) - c.getPosY();
+        double radAbs = axisToRad(Math.abs(distanceX), Math.abs(distanceY)); //For calculations
+        double rad = axisToRad(distanceX, distanceY);
+        double distance = pythagorean(distanceX, distanceY);
+
+        double ballDetectionRange = 2 * Ball.BALLRADIUS;
+
+        if (!c.isCollided() && !o.isCollided() && distance < ballDetectionRange) {
+            double kEnergyTransfert = c.getKineticEnergy() * energyTransferRatio(radAbs, c.getVelocityX(), c.getVelocityY());
+            c.setCollided(true);
+            o.setCollided(true);
+            c.setBouncedX(false);
+            c.setBouncedY(false);
+            o.setBouncedX(false);
+            o.setBouncedY(false);
+            
+            c.setKineticEnergy(c.getKineticEnergy() - kEnergyTransfert );
+            
+            c.setVelocityX(c.getVelocityX() * Math.cos(rad + Math.PI/2 + (Math.PI - rad)));
+            c.setVelocityY(c.getVelocityY() * Math.sin(rad + Math.PI/2 + (Math.PI - rad)));
+            if (!o.isMoving()) {
+                calculateAppliedPower((o.getKineticEnergy() + kEnergyTransfert) / TIMEFRAMESEC, distanceX, distanceY, o);
+            }
+            else {
+                o.setKineticEnergy(o.getKineticEnergy() + kEnergyTransfert);
+                double speed = kineticToSpeed(o.getKineticEnergy(), o);
+                o.setVelocityX(speed * Math.cos(rad));
+                o.setVelocityY(speed * Math.sin(rad));
+            }
+        }
+        if (c.isCollided() && o.isCollided() && distance > ballDetectionRange) {
+            c.setCollided(false);
+            o.setCollided(false);
+        }
     }
     
     private void calculateAppliedPower(double power, double x, double y, Ball ball) {
@@ -267,43 +261,40 @@ public class MainTableController implements Initializable, UI {
         ball.setKineticEnergy(kEnergy);
         
         double speed = kineticToSpeed(kEnergy, ball);
-
+        
         displacementX = speed * Math.cos(rad);
         displacementY = speed * Math.sin(rad);
         
-        predictDisplacement(displacementX, displacementY, ball);
+        ball.setVelocityX(displacementX);
+        ball.setVelocityY(displacementY);
+        
+        measureDistance(ball);
     }
     
     private void measureDistance(Ball ball) {        
         double displacementX = ball.getVelocityX() * TIMEFRAMESEC;
         double displacementY = ball.getVelocityY() * TIMEFRAMESEC;
         
-        predictDisplacement(displacementX, displacementY, ball);
+        displaceBall(ball);
     }
     
-    private void predictDisplacement(double x, double y, Ball ball) {
-        double newX = x;
-        double newY = y;
-        
-        displaceBall(newX, newY, ball);
-    }
-    
-    private void displaceBall(double x, double y, Ball ball) {
+    private void displaceBall(Ball ball) {
         if (ball.getKineticEnergy() <= 0) {
             resetButton.setDisable(false);
             cue.getBall().setDisable(false);
+            ball.setMoving(false);
             return;
         }
-        
-        
         TranslateTransition move = new TranslateTransition(Duration.millis(TIMEFRAME), ball.getBall());
         move.setInterpolator(Interpolator.LINEAR); 
-        move.setToX(ball.getPosX() - ball.getBall().getLayoutX() + x);
-        move.setToY(ball.getPosY() - ball.getBall().getLayoutY() + y);
+        move.setByX(ball.getVelocityX());
+        move.setByY(ball.getVelocityY());
         move.setCycleCount(1);
-
+        
         move.play();
-
+        
+        ball.setMoving(true);
+        
         move.setOnFinished(eh -> {
             ball.setPosX(ball.getBall().getLayoutX() + move.getNode().getTranslateX());
             ball.setPosY(ball.getBall().getLayoutY() + move.getNode().getTranslateY());
@@ -316,6 +307,9 @@ public class MainTableController implements Initializable, UI {
     }
     
     private double axisToRad(double x, double y) {
+        if (x == Double.NaN || y == Double.NaN) {
+            return 0;
+        }
         double rad = Math.atan2(y, x);
         return rad;
     }
@@ -332,24 +326,23 @@ public class MainTableController implements Initializable, UI {
         double velocityRad = axisToRad(Math.abs(velocityX), Math.abs(velocityY));
         
         double ratio = 1 - (Math.max(velocityRad, rad) - Math.min(velocityRad, rad)) / (Math.PI/2);
-        
         return ratio;
     }
     
+    
     private void writePositions() {
         cue.getBall().translateXProperty().addListener(cl->{
-            System.out.println("Cue");
-            System.out.println(cue.getPosX() + " x, " + cue.getPosY() + " y");
-            System.out.println(cue.getVelocityX() + " Vx, " + cue.getVelocityY()+ " Vy");
-            System.out.println(cue.getKineticEnergy() + " Kinetic");
-            System.out.println("Real Cue");            
-            System.out.println(cue.getBall().getTranslateX() + " x, " + cue.getBall().getTranslateY() + " y");
-
-            System.out.println("Object");
-            System.out.println(object.getPosX() + " x, " + object.getPosY() + " y");
-            System.out.println("Real Object");            
-            System.out.println(object.getBall().getTranslateX() + " x, " + object.getBall().getTranslateY() + " y");
-            System.out.println("");
+//            System.out.println("Cue");
+//            System.out.println(cue.getPosX() + " x, " + cue.getPosY() + " y");
+//            System.out.println(cue.getVelocityX() + " Vx, " + cue.getVelocityY()+ " Vy");
+            System.out.println(cue.getKineticEnergy() + " Cue Kinetic");
+        });
+        
+        object.getBall().translateXProperty().addListener(cl -> {
+//            System.out.println("Object");
+//            System.out.println(object.getPosX() + " x, " + object.getPosY() + " y");
+//            System.out.println(object.getVelocityX() + " Vx, " + object.getVelocityY()+ " Vy");
+            System.out.println(object.getKineticEnergy() + " Object Kinetic");
         });
     }
 }
