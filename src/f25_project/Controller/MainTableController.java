@@ -71,7 +71,7 @@ public class MainTableController implements Initializable, UI {
         cue = new Ball(cueBall, cueBall.getLayoutX(), cueBall.getLayoutY());
         object = new Ball(objectBall, objectBall.getLayoutX(), objectBall.getLayoutY());
         
-        writePositions();
+//        writePositions();
         
         bounceOffWallProperty(cue);
         bounceOffWallProperty(object);
@@ -199,6 +199,7 @@ public class MainTableController implements Initializable, UI {
         return true;
     }
     
+    private boolean once = true;  
     private void colliding(Ball c, Ball o) {
         double distanceX = (o.getPosX())  - c.getPosX();
         double distanceY = (o.getPosY()) - c.getPosY();
@@ -215,20 +216,28 @@ public class MainTableController implements Initializable, UI {
             c.setBouncedX(false);
             c.setBouncedY(false);
             o.setBouncedX(false);
-            o.setBouncedY(false);
+            o.setBouncedY(false); 
             
-            c.setKineticEnergy(c.getKineticEnergy() - kEnergyTransfert );
-            
-            c.setVelocityX(c.getVelocityX() * Math.cos(rad + Math.PI/2 + (Math.PI - rad)));
-            c.setVelocityY(c.getVelocityY() * Math.sin(rad + Math.PI/2 + (Math.PI - rad)));
             if (!o.isMoving()) {
+                c.setKineticEnergy(c.getKineticEnergy() - kEnergyTransfert );
+                c.setVelocityX(c.getVelocityX() * Math.cos(rad + Math.PI/2 + (Math.PI - rad)));
+                c.setVelocityY(c.getVelocityY() * Math.sin(rad + Math.PI/2 + (Math.PI - rad)));
                 calculateAppliedPower((o.getKineticEnergy() + kEnergyTransfert) / TIMEFRAMESEC, distanceX, distanceY, o);
             }
             else {
-                o.setKineticEnergy(o.getKineticEnergy() + kEnergyTransfert);
-                double speed = kineticToSpeed(o.getKineticEnergy(), o);
-                o.setVelocityX(speed * Math.cos(rad));
-                o.setVelocityY(speed * Math.sin(rad));
+                if (once) {
+                    c.setKineticEnergy(c.getKineticEnergy() - kEnergyTransfert );
+                    c.setVelocityX(c.getVelocityX() * Math.cos(rad));
+                    c.setVelocityY(c.getVelocityY() * Math.sin(rad));
+                    o.setKineticEnergy(o.getKineticEnergy() + kEnergyTransfert);
+                    double speedO = kineticToSpeed(o.getKineticEnergy(), o);
+                    o.setVelocityX(speedO * Math.cos(rad));
+                    o.setVelocityY(speedO * Math.sin(rad));  
+                    once = false;
+                }
+                else {
+                    once = true;
+                }
             }
         }
         if (c.isCollided() && o.isCollided() && distance > ballDetectionRange) {
@@ -330,19 +339,19 @@ public class MainTableController implements Initializable, UI {
     }
     
     
-    private void writePositions() {
-        cue.getBall().translateXProperty().addListener(cl->{
+//    private void writePositions() {
+//        cue.getBall().translateXProperty().addListener(cl->{
 //            System.out.println("Cue");
 //            System.out.println(cue.getPosX() + " x, " + cue.getPosY() + " y");
 //            System.out.println(cue.getVelocityX() + " Vx, " + cue.getVelocityY()+ " Vy");
-            System.out.println(cue.getKineticEnergy() + " Cue Kinetic");
-        });
-        
-        object.getBall().translateXProperty().addListener(cl -> {
+//            System.out.println(cue.getKineticEnergy() + " Cue Kinetic");
+//        });
+//        
+//        object.getBall().translateXProperty().addListener(cl -> {
 //            System.out.println("Object");
 //            System.out.println(object.getPosX() + " x, " + object.getPosY() + " y");
 //            System.out.println(object.getVelocityX() + " Vx, " + object.getVelocityY()+ " Vy");
-            System.out.println(object.getKineticEnergy() + " Object Kinetic");
-        });
-    }
+//            System.out.println(object.getKineticEnergy() + " Object Kinetic");
+//        });
+//    }
 }
