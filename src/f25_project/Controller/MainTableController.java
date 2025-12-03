@@ -65,7 +65,7 @@ public class MainTableController implements Initializable, UI {
 
     @FXML
     private Pane table;
-
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         cue = new Ball(cueBall, cueBall.getLayoutX(), cueBall.getLayoutY());
@@ -85,15 +85,27 @@ public class MainTableController implements Initializable, UI {
         setFrictionSlider();
     }
     
+    /**
+     * shows the amount of power applied (optional)
+     * @param event the event when the user drags around the Cue ball
+     */
     @FXML
     void aim(MouseEvent event) {
     }
     
+    /**
+     * closes the program
+     * @param event the event when the user activates the Exit button
+     */
     @FXML
     void handleExit(ActionEvent event) {
         ((Stage) exitButton.getScene().getWindow()).close();
     }
     
+    /**
+     * resets the position of the Ball objects
+     * @param event the event when the user activates the Reset button
+     */
     @FXML
     void handleReset(ActionEvent event) {
         cue.setPosX(100);
@@ -107,6 +119,9 @@ public class MainTableController implements Initializable, UI {
         object.setPosY(200);
     }
     
+    /**
+     * sets the slider listeners for the masses of the Ball objects and the label
+     */
     private void setMassSlider() {
         massSlider.valueProperty().addListener(cl -> {
             massLabel.setText(String.format("%.2f",massSlider.getValue()));
@@ -123,6 +138,9 @@ public class MainTableController implements Initializable, UI {
         });
     }
     
+    /**
+     * sets the slider listeners for the friction coefficient of the table and the label
+     */
     private void setFrictionSlider() {
         frictionSlider.valueProperty().addListener(cl -> {
             frictionLabel.setText(String.format("%.2f", frictionSlider.getValue()));
@@ -149,6 +167,10 @@ public class MainTableController implements Initializable, UI {
         cue.getBall().setDisable(true);
     }
     
+    /**
+     * sets the given ball the property that bounces when reaching the borders of the table/pane/parent
+     * @param ball the selected ball - every ball should have this property
+     */
     private void bounceOffWallProperty(Ball ball) {
         ball.getBall().translateXProperty().addListener(cl -> {
             double left = Ball.BALLRADIUS - ball.getBall().getLayoutX();
@@ -186,6 +208,13 @@ public class MainTableController implements Initializable, UI {
         });
     }
     
+    /**
+     * sets the property of the acting Ball object to collide with another Ball object
+     * separates both the x and y translate listeners since the collision should only occur once
+     * @param c the acting Ball object
+     * @param o the colliding Ball object
+     * @return a true or false value indicating that the function become active
+     */
     private boolean collide(Ball c, Ball o) {
         c.getBall().translateXProperty().addListener(cl -> {
                 colliding(c,o);
@@ -198,8 +227,14 @@ public class MainTableController implements Initializable, UI {
         });
         return true;
     }
-    
+   
     private boolean once = true;  
+    /**
+     * main function
+     * calculates the energy, velocities, and angle of the motion of the colliding Ball objects
+     * @param c the acting Ball object
+     * @param o the colliding Ball object
+     */
     private void colliding(Ball c, Ball o) {
         double distanceX = (o.getPosX())  - c.getPosX();
         double distanceY = (o.getPosY()) - c.getPosY();
@@ -246,6 +281,13 @@ public class MainTableController implements Initializable, UI {
         }
     }
     
+    /**
+     * calculates the power applied to the Ball object, energy, velocities, and angle of the motion 
+     * @param power the power applied on the Ball object
+     * @param x the x distance between the Ball object and the applied power
+     * @param y the y distance between the Ball object and the applied power
+     * @param ball the selected Ball object
+     */
     private void calculateAppliedPower(double power, double x, double y, Ball ball) {
         double rad = axisToRad(x, y);
         double kEnergy = power * TIMEFRAMESEC;
@@ -261,6 +303,10 @@ public class MainTableController implements Initializable, UI {
         measureDistance(ball);
     }
     
+    /**
+     * recalculates the trajectory of the motion of the Ball object, which includes friction
+     * @param ball the selected Ball object that its trajectory is being adjusting
+     */
     private void calculateNewMotion(Ball ball) {
         double displacementX = ball.getVelocityX() * TIMEFRAMESEC;
         double displacementY = ball.getVelocityY() * TIMEFRAMESEC;
@@ -280,6 +326,10 @@ public class MainTableController implements Initializable, UI {
         measureDistance(ball);
     }
     
+    /**
+     * calculates the future displacements of the Ball object according to its kinetic energy
+     * @param ball the selected Ball object
+     */
     private void measureDistance(Ball ball) {        
         double displacementX = ball.getVelocityX() * TIMEFRAMESEC;
         double displacementY = ball.getVelocityY() * TIMEFRAMESEC;
@@ -287,6 +337,11 @@ public class MainTableController implements Initializable, UI {
         displaceBall(ball);
     }
     
+    /**
+     * moves the Ball object based on its x and y velocities in a fixed time frame
+     * it recalls the calculateNewMotion function to readjust the Ball object's motion
+     * @param ball the selected Ball object
+     */
     private void displaceBall(Ball ball) {
         if (ball.getKineticEnergy() <= 0) {
             resetButton.setDisable(false);
@@ -307,14 +362,28 @@ public class MainTableController implements Initializable, UI {
         move.setOnFinished(eh -> {
             ball.setPosX(ball.getBall().getLayoutX() + move.getNode().getTranslateX());
             ball.setPosY(ball.getBall().getLayoutY() + move.getNode().getTranslateY());
+            move.stop();
             calculateNewMotion(ball);
         });
     }
     
+    /**
+     * calculates the work done by the friction acted on the given Ball object
+     * @param displacement the distance traveled by the given Ball object
+     * @param ball the selected Ball object
+     * @return the work done by the friction acted on the given Ball object
+     */
     private double frictionDecay(double displacement, Ball ball) {
         return frictionCoefficient * ball.getBallMass() * GRAVITYA * displacement;
     }
     
+    /**
+     * calculates the angle in rad with the given x & y axis
+     * it measures with any x & y data
+     * @param x the x axis
+     * @param y the y axis
+     * @return the angle in rad
+     */
     private double axisToRad(double x, double y) {
         if (x == Double.NaN || y == Double.NaN) {
             return 0;
@@ -323,14 +392,33 @@ public class MainTableController implements Initializable, UI {
         return rad;
     }
     
+    /**
+     * calculates the hypotenuse or magnitude of any given x & y axis
+     * @param x the x axis
+     * @param y the y axis
+     * @return the hypotenuse of the given x & y axis
+     */
     private double pythagorean(double x, double y) {
         return Math.sqrt((Math.pow(x, 2)) + (Math.pow(y, 2)));
     }
     
+    /**
+     * calculates the speed according to the kinetic energy of the Ball object
+     * @param kinetic the kinetic energy of the Ball object
+     * @param ball the selected Ball object
+     * @return the speed the Ball object
+     */
     private double kineticToSpeed(double kinetic, Ball ball) {
         return Math.sqrt((kinetic * 2) / ball.getBallMass());
     }
     
+    /**
+     * calculations the portion of energy transferred according to the angle of the Ball object colliding with the other
+     * @param rad the angle that the acting Ball object is colliding at
+     * @param velocityX the initial x velocity of the acting Ball object
+     * @param velocityY the initial y velocity of the acting Ball object
+     * @return the ratio of the total energy that is transferred
+     */
     private double energyTransferRatio(double rad, double velocityX, double velocityY) {
         double velocityRad = axisToRad(Math.abs(velocityX), Math.abs(velocityY));
         
@@ -338,20 +426,22 @@ public class MainTableController implements Initializable, UI {
         return ratio;
     }
     
-    
-//    private void writePositions() {
-//        cue.getBall().translateXProperty().addListener(cl->{
-//            System.out.println("Cue");
-//            System.out.println(cue.getPosX() + " x, " + cue.getPosY() + " y");
-//            System.out.println(cue.getVelocityX() + " Vx, " + cue.getVelocityY()+ " Vy");
-//            System.out.println(cue.getKineticEnergy() + " Cue Kinetic");
-//        });
-//        
-//        object.getBall().translateXProperty().addListener(cl -> {
-//            System.out.println("Object");
-//            System.out.println(object.getPosX() + " x, " + object.getPosY() + " y");
-//            System.out.println(object.getVelocityX() + " Vx, " + object.getVelocityY()+ " Vy");
-//            System.out.println(object.getKineticEnergy() + " Object Kinetic");
-//        });
-//    }
+    /**
+     * only displays the data held in the Ball objects
+     */
+    private void writePositions() {
+        cue.getBall().translateXProperty().addListener(cl->{
+            System.out.println("Cue");
+            System.out.println(cue.getPosX() + " x, " + cue.getPosY() + " y");
+            System.out.println(cue.getVelocityX() + " Vx, " + cue.getVelocityY()+ " Vy");
+            System.out.println(cue.getKineticEnergy() + " Cue Kinetic");
+        });
+        
+        object.getBall().translateXProperty().addListener(cl -> {
+            System.out.println("Object");
+            System.out.println(object.getPosX() + " x, " + object.getPosY() + " y");
+            System.out.println(object.getVelocityX() + " Vx, " + object.getVelocityY()+ " Vy");
+            System.out.println(object.getKineticEnergy() + " Object Kinetic");
+        });
+    }
 }
