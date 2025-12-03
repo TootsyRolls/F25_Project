@@ -31,8 +31,8 @@ public class F25_Project extends Application implements UI{
         stage.setScene(new Scene(menuLoader.load()));
         stage.show();
         
-        stage.sceneProperty().addListener(cl -> {
-            stage.setMaximized(true);
-        });
+//        stage.sceneProperty().addListener(cl -> {
+//            stage.setMaximized(true);
+//        });
     }
 }

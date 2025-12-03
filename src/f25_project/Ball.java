@@ -21,6 +21,8 @@ public class Ball {
     private double kineticEnergy;
     private boolean bouncedX = false;
     private boolean bouncedY = false;
+    private boolean collided = false;
+    private boolean moving = false;
 
     public Ball(Circle ball, double PosX, double PosY) {
         this.ball = ball;
@@ -108,7 +110,19 @@ public class Ball {
         this.bouncedY = bouncedY;
     }
 
-    
-    
-    
+    public boolean isCollided() {
+        return collided;
+    }
+
+    public void setCollided(boolean collided) {
+        this.collided = collided;
+    }
+
+    public boolean isMoving() {
+        return moving;
+    }
+
+    public void setMoving(boolean moving) {
+        this.moving = moving;
+    }
 }
