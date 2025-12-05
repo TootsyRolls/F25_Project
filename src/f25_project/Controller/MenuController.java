@@ -33,7 +33,6 @@ public class MenuController implements Initializable, UI {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
     }    
 
     @FXML

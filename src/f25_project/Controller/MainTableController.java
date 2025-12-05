@@ -311,11 +311,11 @@ public class MainTableController implements Initializable, UI {
         });
     }
     
-    private double frictionDecay(double displacement, Ball ball) {
+    protected double frictionDecay(double displacement, Ball ball) {
         return frictionCoefficient * ball.getBallMass() * GRAVITYA * displacement;
     }
     
-    private double axisToRad(double x, double y) {
+    protected double axisToRad(double x, double y) {
         if (x == Double.NaN || y == Double.NaN) {
             return 0;
         }
@@ -323,15 +323,15 @@ public class MainTableController implements Initializable, UI {
         return rad;
     }
     
-    private double pythagorean(double x, double y) {
+    protected double pythagorean(double x, double y) {
         return Math.sqrt((Math.pow(x, 2)) + (Math.pow(y, 2)));
     }
     
-    private double kineticToSpeed(double kinetic, Ball ball) {
+    protected double kineticToSpeed(double kinetic, Ball ball) {
         return Math.sqrt((kinetic * 2) / ball.getBallMass());
     }
     
-    private double energyTransferRatio(double rad, double velocityX, double velocityY) {
+    protected double energyTransferRatio(double rad, double velocityX, double velocityY) {
         double velocityRad = axisToRad(Math.abs(velocityX), Math.abs(velocityY));
         
         double ratio = 1 - (Math.max(velocityRad, rad) - Math.min(velocityRad, rad)) / (Math.PI/2);
@@ -339,7 +339,7 @@ public class MainTableController implements Initializable, UI {
     }
     
     
-//    private void writePositions() {
+//    protected void writePositions() {
 //        cue.getBall().translateXProperty().addListener(cl->{
 //            System.out.println("Cue");
 //            System.out.println(cue.getPosX() + " x, " + cue.getPosY() + " y");
