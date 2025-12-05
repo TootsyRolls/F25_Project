@@ -35,17 +35,31 @@ public class MenuController implements Initializable, UI {
     public void initialize(URL url, ResourceBundle rb) {
     }    
 
+    /**
+     * starts the program by switching the scene to a Scene object with the MainTable UI
+     * @param event the event when the user activates the Start button
+     * @throws IOException 
+     */
     @FXML
     private void handleStart(ActionEvent event) throws IOException {
         Stage stage = (Stage) startButton.getScene().getWindow();
         stage.setScene(toMainTable());
     }
 
+    /**
+     * closes the program
+     * @param event the event when the user activates the Exit button
+     */
     @FXML
     private void handleExit(ActionEvent event) {
         ((Stage) exitButton.getScene().getWindow()).close();
     }
     
+    /**
+     * loads the MainTable .fxml file into a scene
+     * @return the Scene object containing the MainTable UI
+     * @throws IOException an IOException indicating the presence of the file
+     */
     private Scene toMainTable() throws IOException {
         Parent mainTable = mainLoader.load();
         return new Scene(mainTable);
