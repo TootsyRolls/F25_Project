@@ -20,39 +20,12 @@ import org.junit.Test;
 public class MainTableControllerTest {
     
     private static double delta = 0.01; // Tolerance margin for double values needed for asserEquals()
-//    
     private static MainTableController instance;
-//    private static Method pythagorean;
-//    private static Method axisToRad;
-//    private static Method kineticToSpeed;
-//    private static Method frictionDecay;
 
     @Before
     public void setUp() throws Exception {
         instance = new MainTableController();
     }
-    
-    
-//    /**
-//     * Uses reflection to access private methods in MainTableController before testing
-//     * @throws Exception 
-//     */
-//    @BeforeAll
-//    public static void setUpClass() throws Exception {
-//        instance = new MainTableController();
-//        
-//        pythagorean = MainTableController.class.getDeclaredMethod("pythagorean", double.class, double.class);
-//        pythagorean.setAccessible(true);
-//        
-//        axisToRad = MainTableController.class.getDeclaredMethod("axisToRad", double.class, double.class);
-//        axisToRad.setAccessible(true);
-//        
-//        kineticToSpeed = MainTableController.class.getDeclaredMethod("kineticToSpeed", double.class, Ball.class);
-//        kineticToSpeed.setAccessible(true);
-//        
-//        frictionDecay = MainTableController.class.getDeclaredMethod("kineticToSpeed", double.class, double.class);
-//        frictionDecay.setAccessible(true);
-//    }
 
     @Test
     public void testPythagorean1() throws Exception {
