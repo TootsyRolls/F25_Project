@@ -14,8 +14,8 @@ you will find:
   * A reset & exit buttons
 
 ### How to move the balls ⚪💥🎱
-Hold down your left mouse button on the ball and pull back to charge up your shot. Once you let go,\
-the ball will go flying in the opposite direction!
+Hold down your left mouse button on the ball and pull back to charge up your shot. Once you let\
+go, the ball will go flying in the opposite direction!
 ### How to change the environment ⚙
 Move the sliders up and down to change their values.
 
