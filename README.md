@@ -19,6 +19,6 @@ Once you let go, the ball will go flying in the opposite direction!
 Move the sliders up and down to change their values.
 
 ## Contributors 👥
-* Tony Gian: Implementation of JUnit
-* Nathan Cheng: Implementation of Ball, UI, Controllers & FXMLs
-* Michael Klymchuk: Implementation of Data FXML & DataController
+* Tony Gian : Implementation of JUnit
+* Nathan Cheng : Implementation of Ball, UI, Controllers & FXMLs
+* Michael Klymchuk : Implementation of Data FXML & DataController
